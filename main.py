@@ -1,3 +1,6 @@
+from argparse import ArgumentParser
+
+
 # returns the converted map as a LIST
 def convert_map(stage_map_rows: list) -> list:
     converted_map = []
@@ -30,8 +33,17 @@ def convert_map(stage_map_rows: list) -> list:
     return converted_map
 
 
-# opens the txt file with the stage map
-with open("stage_map.txt") as stage_map:
-    stage_map_list = stage_map.readlines()
+def main():
+    # argument in the terminal for stage file
+    arg_parser = ArgumentParser()
+    arg_parser.add_argument("stage_file")
+    args = arg_parser.parse_args()
 
-    print("\n".join(convert_map(stage_map_list)))
+    # opens the txt file with the stage map
+    with open(args.stage_file, encoding="utf-8") as stage_map:
+        stage_map_list = stage_map.readlines()
+
+        print("\n".join(convert_map(stage_map_list)))
+
+
+main()
