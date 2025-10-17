@@ -1,5 +1,4 @@
-# content of test_sample.py
-# returns the converted map as a LIST
+# for unit testing of test_sample.py
 def convert_map(stage_map_rows: list) -> list:
     converted_map = []
 
