@@ -36,7 +36,7 @@ def convert_map(stage_map_rows: list) -> list:
 def main():
     # argument in the terminal for stage file
     arg_parser = ArgumentParser()
-    arg_parser.add_argument("stage_file")
+    arg_parser.add_argument("stage_file", nargs="?", default="stage_map.txt")
     args = arg_parser.parse_args()
 
     # opens the txt file with the stage map
