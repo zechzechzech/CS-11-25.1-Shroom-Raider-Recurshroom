@@ -8,26 +8,23 @@ def clear():
 def convert_map(stage_map: list) -> str:
     converted_map = []
 
+    ui_representation = {
+    "L": "🧑",
+    "T": "🌲",
+    "+": "🍄",
+    "R": "🪨",
+    "x": "🪓",
+    "*": "🔥",
+    "~": "🟦",
+    ".": "  ",
+    "\n": "  "
+    }
+
     # goes through every row and character then appends to the converted_row list
     for row in stage_map:
         converted_row = []
         for char in row:
-            if char == "L":
-                converted_row.append("🧑")
-            elif char == "T":
-                converted_row.append("🌲")
-            elif char == "+":
-                converted_row.append("🍄")
-            elif char == "R":
-                converted_row.append("🪨")
-            elif char == "x":
-                converted_row.append("🪓")
-            elif char == "*":
-                converted_row.append("🔥")
-            elif char == "~":
-                converted_row.append("🟦")
-            else:
-                converted_row.append("  ")
+            converted_row.append(ui_representation[char])
 
         # appends converted_row as a string to the converted_map list 
         converted_map.append("".join(converted_row))
