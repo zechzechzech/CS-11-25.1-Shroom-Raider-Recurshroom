@@ -16,8 +16,8 @@ def convert_map(stage_map: list) -> str:
     "x": "🪓",
     "*": "🔥",
     "~": "🟦",
-    ".": "  ",
-    "\n": "  "
+    ".": "\u3000",
+    "\n": "\u3000"
     }
 
     # goes through every row and character then appends to the converted_row list
@@ -111,6 +111,7 @@ def main():
             if stage_map[target_y][target_x] == "T":
                 continue
             else:
+                # updates to the actual position if the target position is free
                 player_y = target_y
                 player_x = target_x
 
