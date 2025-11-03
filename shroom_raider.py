@@ -63,16 +63,21 @@ def interact(player_x, player_y, stage_map):
 
     for y, row in enumerate(stage_map):
         new_row = []
+        new_held_item = None
 
         for x, char in enumerate(row):
             if x == player_x and y == player_y and char in {'x','*'} :
                 new_row.append(".")
+                if char == 'x':
+                    new_held_item = "Axe"
+                if char == '*':
+                    new_held_item = "Flamethrower"
             else:
                 new_row.append(char)
 
         new_map.append("".join(new_row))
 
-    return new_map
+    return new_map, new_held_item
 
 def main():
     # argument in the terminal for stage file
@@ -125,7 +130,7 @@ def main():
                 target_x += 1
 
             elif move == 'p':
-                stage_map = interact(player_x, player_y, stage_map)
+                stage_map, held_item = interact(player_x, player_y, stage_map)
 
             # if theres a tree, just dont update the map lmfao
             if stage_map[target_y][target_x] == "T":
