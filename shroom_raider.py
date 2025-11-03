@@ -57,8 +57,22 @@ def update_map(player_x, player_y, stage_map):
         new_map.append("".join(new_row))
 
     return new_map
+    
+def interact(player_x, player_y, stage_map):
+    new_map = []
 
+    for y, row in enumerate(stage_map):
+        new_row = []
 
+        for x, char in enumerate(row):
+            if x == player_x and y == player_y and char in {'x','*'} :
+                new_row.append(".")
+            else:
+                new_row.append(char)
+
+        new_map.append("".join(new_row))
+
+    return new_map
 
 def main():
     # argument in the terminal for stage file
@@ -74,11 +88,14 @@ def main():
     # gets the player's original position
     player_x, player_y = get_player_position(stage_map)
 
+    held_item = None
+
 
     # clears the terminal
     clear()
     # converts ascii map to ui representation    
     print(convert_map(update_map(player_x, player_y, stage_map)))
+    print(held_item)
 
     game_state = True
     while game_state:
@@ -107,6 +124,9 @@ def main():
             elif move == "d":
                 target_x += 1
 
+            elif move == 'p':
+                stage_map = interact(player_x, player_y, stage_map)
+
             # if theres a tree, just dont update the map lmfao
             if stage_map[target_y][target_x] == "T":
                 continue
@@ -118,6 +138,7 @@ def main():
         clear()
         # converts ascii map to ui representation
         print(convert_map(update_map(player_x, player_y, stage_map)))
+        print(held_item)
 
 
 # P.S. IM SORRY TO WHOEVER IS READING AND CHANGING THIS CODE
