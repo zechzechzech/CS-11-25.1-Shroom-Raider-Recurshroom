@@ -58,13 +58,13 @@ def update_map(player_x, player_y, stage_map):
 
     return new_map
     
-def interact(player_x, player_y, stage_map):
+def interact(player_x, player_y, stage_map, held_item):
     new_map = []
+    new_held_item = held_item
 
     for y, row in enumerate(stage_map):
         new_row = []
-        new_held_item = None
-
+        
         for x, char in enumerate(row):
             if x == player_x and y == player_y and char in {'x','*'} :
                 new_row.append(".")
@@ -78,6 +78,22 @@ def interact(player_x, player_y, stage_map):
         new_map.append("".join(new_row))
 
     return new_map, new_held_item
+
+def chopped(target_x, target_y, stage_map, held_item):
+    new_map = []
+
+    for y, row in enumerate(stage_map):
+        new_row = []
+
+        for x, char in enumerate(row):
+            if x == target_x and y == target_y :
+                new_row.append(".")
+            else:
+                new_row.append(char)
+
+        new_map.append("".join(new_row))
+
+    return new_map
 
 def main():
     # argument in the terminal for stage file
@@ -100,7 +116,7 @@ def main():
     clear()
     # converts ascii map to ui representation    
     print(convert_map(update_map(player_x, player_y, stage_map)))
-    print(held_item)
+    print('Item held:',held_item)
 
     game_state = True
     while game_state:
@@ -130,20 +146,34 @@ def main():
                 target_x += 1
 
             elif move == 'p':
-                stage_map, held_item = interact(player_x, player_y, stage_map)
+                stage_map, held_item = interact(player_x, player_y, stage_map, held_item)
+
+            elif move == '!':
+                main()
 
             # if theres a tree, just dont update the map lmfao
-            if stage_map[target_y][target_x] == "T":
-                continue
-            else:
-                # updates to the actual position if the target position is free
+            if held_item in {'Axe', 'Flamethrower'}:
+                if stage_map[target_y][target_x] == "T":
+                    stage_map = chopped(target_x, target_y, stage_map, held_item)
                 player_y = target_y
                 player_x = target_x
+#changes the stagemap
+#ilalagay pa ung flamethrower and dapa macoconsume ung held item hehe
+
+            else:
+                if stage_map[target_y][target_x] == "T":
+                    continue
+                else:
+                    # updates to the actual position if the target position is free
+                    player_y = target_y
+                    player_x = target_x
+#need i add na hindi dapat makastep on water
+#need i add na hindi dapat mag out of bounds ung character
 
         clear()
         # converts ascii map to ui representation
         print(convert_map(update_map(player_x, player_y, stage_map)))
-        print(held_item)
+        print('Item held:',held_item)
 
 
 # P.S. IM SORRY TO WHOEVER IS READING AND CHANGING THIS CODE
@@ -153,3 +183,4 @@ def main():
 # CUZ LOWKEY LINAGAY KO SA MAIN FUNCTION YUNG KARAMIHAN
 # MAH BAD
 main()
+
