@@ -76,6 +76,7 @@ def interact(player_x, player_y, stage_map, held_item):
                 new_row.append(char)
 
         new_map.append("".join(new_row))
+        new_map.append
 
     return new_map, new_held_item
 
@@ -94,6 +95,34 @@ def chopped(target_x, target_y, stage_map, held_item):
         new_map.append("".join(new_row))
 
     return new_map
+
+def separate(stage_map):
+
+    new_map = []
+
+    for rows in stage_map:
+        new_row = []
+        for cols in rows.strip('\n'):
+            new_row.append(cols)
+        new_map.append(new_row)
+
+    return new_map
+
+def burned(x, y, stage_map):
+
+    r = len(stage_map)
+    c = len(stage_map[0])
+
+    if x < 0 or x >= c or y < 0 or y >= r or stage_map[y][x] != 'T':
+        return stage_map
+
+    else:
+        stage_map[y][x] = '.'
+        burned(x+1, y, stage_map)
+        burned(x-1, y, stage_map)
+        burned(x, y+1, stage_map)
+        burned(x, y-1, stage_map)
+        return stage_map
 
 def main():
     # argument in the terminal for stage file
@@ -152,28 +181,40 @@ def main():
                 main()
 
             # if theres a tree, just dont update the map lmfao
-            if held_item in {'Axe', 'Flamethrower'}:
-                if stage_map[target_y][target_x] == "T":
+            if stage_map[target_y][target_x] == "T":
+                if held_item == 'Axe':
                     stage_map = chopped(target_x, target_y, stage_map, held_item)
-                player_y = target_y
-                player_x = target_x
-#changes the stagemap
-#ilalagay pa ung flamethrower and dapa macoconsume ung held item hehe
-
-            else:
-                if stage_map[target_y][target_x] == "T":
-                    continue
-                else:
-                    # updates to the actual position if the target position is free
                     player_y = target_y
                     player_x = target_x
-#need i add na hindi dapat makastep on water
+                    held_item = None
+                elif held_item == 'Flamethrower':
+                    stage_map = burned(target_x, target_y, separate(stage_map))
+                    player_y = target_y
+                    player_x = target_x
+                    held_item = None
+                else:
+                    continue
+            elif stage_map[target_y][target_x] == "+":
+                clear()
+                print("You Win")
+                return
+
+            elif stage_map[target_y][target_x] == "~":
+                clear()
+                print("You lose")
+                return
+
+            else:
+                player_y = target_y
+                player_x = target_x
+
 #need i add na hindi dapat mag out of bounds ung character
 
         clear()
         # converts ascii map to ui representation
         print(convert_map(update_map(player_x, player_y, stage_map)))
         print('Item held:',held_item)
+        print(stage_map)
 
 
 # P.S. IM SORRY TO WHOEVER IS READING AND CHANGING THIS CODE
@@ -183,4 +224,5 @@ def main():
 # CUZ LOWKEY LINAGAY KO SA MAIN FUNCTION YUNG KARAMIHAN
 # MAH BAD
 main()
+
 
