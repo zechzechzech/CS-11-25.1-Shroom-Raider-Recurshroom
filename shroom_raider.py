@@ -214,7 +214,6 @@ def main():
         # converts ascii map to ui representation
         print(convert_map(update_map(player_x, player_y, stage_map)))
         print('Item held:',held_item)
-        print(stage_map)
 
 
 # P.S. IM SORRY TO WHOEVER IS READING AND CHANGING THIS CODE
