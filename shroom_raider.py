@@ -57,8 +57,72 @@ def update_map(player_x, player_y, stage_map):
         new_map.append("".join(new_row))
 
     return new_map
+    
+def interact(player_x, player_y, stage_map, held_item):
+    new_map = []
+    new_held_item = held_item
 
+    for y, row in enumerate(stage_map):
+        new_row = []
+        
+        for x, char in enumerate(row):
+            if x == player_x and y == player_y and char in {'x','*'} :
+                new_row.append(".")
+                if char == 'x':
+                    new_held_item = "Axe"
+                if char == '*':
+                    new_held_item = "Flamethrower"
+            else:
+                new_row.append(char)
 
+        new_map.append("".join(new_row))
+        new_map.append
+
+    return new_map, new_held_item
+
+def chopped(target_x, target_y, stage_map, held_item):
+    new_map = []
+
+    for y, row in enumerate(stage_map):
+        new_row = []
+
+        for x, char in enumerate(row):
+            if x == target_x and y == target_y :
+                new_row.append(".")
+            else:
+                new_row.append(char)
+
+        new_map.append("".join(new_row))
+
+    return new_map
+
+def separate(stage_map):
+
+    new_map = []
+
+    for rows in stage_map:
+        new_row = []
+        for cols in rows.strip('\n'):
+            new_row.append(cols)
+        new_map.append(new_row)
+
+    return new_map
+
+def burned(x, y, stage_map):
+
+    r = len(stage_map)
+    c = len(stage_map[0])
+
+    if x < 0 or x >= c or y < 0 or y >= r or stage_map[y][x] != 'T':
+        return stage_map
+
+    else:
+        stage_map[y][x] = '.'
+        burned(x+1, y, stage_map)
+        burned(x-1, y, stage_map)
+        burned(x, y+1, stage_map)
+        burned(x, y-1, stage_map)
+        return stage_map
 
 def main():
     # argument in the terminal for stage file
@@ -74,11 +138,14 @@ def main():
     # gets the player's original position
     player_x, player_y = get_player_position(stage_map)
 
+    held_item = None
+
 
     # clears the terminal
     clear()
     # converts ascii map to ui representation    
     print(convert_map(update_map(player_x, player_y, stage_map)))
+    print('Item held:',held_item)
 
     game_state = True
     while game_state:
@@ -107,17 +174,46 @@ def main():
             elif move == "d":
                 target_x += 1
 
+            elif move == 'p':
+                stage_map, held_item = interact(player_x, player_y, stage_map, held_item)
+
+            elif move == '!':
+                main()
+
             # if theres a tree, just dont update the map lmfao
             if stage_map[target_y][target_x] == "T":
-                continue
+                if held_item == 'Axe':
+                    stage_map = chopped(target_x, target_y, stage_map, held_item)
+                    player_y = target_y
+                    player_x = target_x
+                    held_item = None
+                elif held_item == 'Flamethrower':
+                    stage_map = burned(target_x, target_y, separate(stage_map))
+                    player_y = target_y
+                    player_x = target_x
+                    held_item = None
+                else:
+                    continue
+            elif stage_map[target_y][target_x] == "+":
+                clear()
+                print("You Win")
+                return
+
+            elif stage_map[target_y][target_x] == "~":
+                clear()
+                print("You lose")
+                return
+
             else:
-                # updates to the actual position if the target position is free
                 player_y = target_y
                 player_x = target_x
+
+#need i add na hindi dapat mag out of bounds ung character
 
         clear()
         # converts ascii map to ui representation
         print(convert_map(update_map(player_x, player_y, stage_map)))
+        print('Item held:',held_item)
 
 
 # P.S. IM SORRY TO WHOEVER IS READING AND CHANGING THIS CODE
@@ -127,3 +223,5 @@ def main():
 # CUZ LOWKEY LINAGAY KO SA MAIN FUNCTION YUNG KARAMIHAN
 # MAH BAD
 main()
+
+
