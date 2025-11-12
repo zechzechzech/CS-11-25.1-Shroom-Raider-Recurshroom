@@ -51,7 +51,11 @@ def main():
     args = arg_parser.parse_args()
 
     with open(args.stage_file, encoding="utf-8") as stage_file:
-        stage_map = [list(line.rstrip("\n")) for line in stage_file.readlines()]
+        stage_file_list = [list(line.rstrip("\n")) for line in stage_file.readlines()]
+        first_line = ''.join(stage_file_list[0])
+        cols = int(first_line.split()[0])
+        rows = int(first_line.split()[1])
+        stage_map = stage_file_list[1:]
 
     player_x, player_y = get_player_position(stage_map)
     if player_x is None:
