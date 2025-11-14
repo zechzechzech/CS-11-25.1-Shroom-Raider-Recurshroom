@@ -59,10 +59,10 @@ python shroom_raider.py
 - **Run Away** – Exit the game.  
 
 3. Controls in the forest:
-- **W / U** – Move up  
-- **A / L** – Move left  
-- **S / D** – Move down  
-- **D / R** – Move right  
+- **W** – Move up  
+- **A** – Move left  
+- **S** – Move down  
+- **D** – Move right  
 - **P** – Pick up item  
 - **!** – Reset stage  
 - **exit** – Quit the game
