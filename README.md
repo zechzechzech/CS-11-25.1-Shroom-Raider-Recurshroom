@@ -6,7 +6,7 @@
 
 ## Features
 
-- Navigate a 2D map using **W/A/S/D** or **U/L/D/R** keys.
+- Navigate a 2D map using **W/A/S/D** keys.
 - Collect mushrooms to win.
 - Interact with trees using **axe** or **flamethrower**.
 - Push rocks to clear paths.
