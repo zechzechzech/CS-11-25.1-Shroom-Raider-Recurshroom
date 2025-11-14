@@ -131,7 +131,11 @@ pytest
 
 ## Requirements File (`requirements.txt`)
 ```
-colorama
-pytest
+iniconfig==2.1.0
+packaging==25.0
+pluggy==1.6.0
+Pygments==2.19.2
+pytest==8.4.2
+colorama==0.4.6
 ```
 
