@@ -1,6 +1,10 @@
 import os
 from argparse import ArgumentParser
 from collections import deque
+from copy import deepcopy
+from colorama import init, Fore, Style
+
+init(autoreset=True)
 
 GROUND_OBJECTS = ["T", "R", "+", "*", "x"]
 PICKUP_ITEMS = {"+": "mushroom", "x": "axe", "*": "flamethrower"}
@@ -102,7 +106,7 @@ def pick_item(under_tile, held_item):
     return held_item, None, "Nothing to pick up"
 
 
-def handle_action(move, stage_map, px, py, under_tile, held_item, score, total_mmushrooms):
+def handle_action(move, stage_map, px, py, under_tile, held_item, score, total_mushrooms):
     if move == "p":
         new_held, new_under, msg = pick_item(under_tile, held_item)
         if new_under is not None:
@@ -110,13 +114,13 @@ def handle_action(move, stage_map, px, py, under_tile, held_item, score, total_m
         return px, py, under_tile, new_held, score, False, msg
 
     tx, ty = px, py
-    if move == "w":
+    if move in ["w"]:
         ty -= 1
-    elif move == "s":
+    elif move in ["s"]:
         ty += 1
-    elif move == "a":
+    elif move in ["a"]:
         tx -= 1
-    elif move == "d":
+    elif move in ["d"]:
         tx += 1
     else:
         return px, py, under_tile, held_item, score, False, None
@@ -125,7 +129,6 @@ def handle_action(move, stage_map, px, py, under_tile, held_item, score, total_m
         return px, py, under_tile, held_item, score, False, "You can't move there."
 
     tile = stage_map[ty][tx]
-
     tree_result, held_item, msg = interact_tree(stage_map, tile, tx, ty, held_item, px, py, under_tile)
     if tree_result:
         px, py, under_tile = tree_result
@@ -153,62 +156,147 @@ def handle_action(move, stage_map, px, py, under_tile, held_item, score, total_m
             under_tile = "."
             if score == total_mushrooms:
                 return px, py, under_tile, held_item, score, True, "All mushrooms collected! You win!"
-
         if under_tile in ["x", "*"]:
             msg = f"Stepped on {PICKUP_ITEMS[under_tile]}. Press P to pick up."
-
         return px, py, under_tile, held_item, score, False, msg
 
     return px, py, under_tile, held_item, score, False, "You can't walk there."
 
 
+# Main Menu and Tutorial
+def display_tutorial():
+    clear()
+    print(Fore.GREEN + "Ranger's Notes:")
+    print("\nWelcome, adventurer! Here are some tips to survive the forest:")
+    print("- Move using W/A/S/D keys.")
+    print("- Pick up special items using P.")
+    print("- Reset the stage using !")
+    print("- Chop trees with an axe or burn with flamethrower.")
+    print("- Push rocks to clear your path.")
+    print("- Collect all mushrooms to win the game.")
+    print("- Avoid water or you will lose.\n")
+    input("Press Enter to return to the main menu...")
+
+
+def display_menu():
+    clear()
+    print(Fore.CYAN + """
+███████╗██╗  ██╗██████╗  ██████╗  ██████╗ ███╗   ███╗    ██████╗  █████╗ ██╗██████╗ ███████╗██████╗
+██╔════╝██║  ██║██╔══██╗██╔═══██╗██╔═══██╗████╗ ████║    ██╔══██╗██╔══██║██║██╔══██╗██╔════╝██╔══██╗
+███████╗███████║██████╔╝██║   ██║██║   ██║██╔████╔██║    ██████╔╝███████║██║██║  ██║█████╗  ██████╔╝
+╚════██║██╔══██║██╔══██╗██║   ██║██║   ██║██║╚██╔╝██║    ██╔══██╗██╔══██║██║██║  ██║██╔══╝  ██╔══██╗
+███████║██║  ██║██║  ██║╚██████╔╝╚██████╔╝██║ ╚═╝ ██║    ██║  ██║██║  ██║██║██████╔╝███████╗██║  ██║
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝     ╚═╝    ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝
+""")
+    print("Hi Laro Craft! Welcome to Shroom Raider.\n")
+    print("We’re amazed by your skills in mushroom gathering. Collect all the mushrooms hidden in the forest — can you master the game?\n")
+    print("[1] Read the Ranger's Notes")
+    print("[2] Enter the Forest")
+    print("[3] Run Away\n")
+    choice = input("Which path will you take? (1, 2, or 3): ").strip()
+
+    if choice == "3":
+        clear()
+        print("You ran away... Maybe next time!")
+        exit()
+    elif choice == "1":
+        display_tutorial()
+        return display_menu()
+    elif choice == "2":
+        return enter_forest_menu()
+    else:
+        return display_menu()
+
+
+def enter_forest_menu():
+    clear()
+    print("You are about to enter the forest.\n")
+    print("[1] Proceed into the Forest")
+    print("[2] Return to Main Menu\n")
+    choice = input("Which path will you take? (1 or 2): ").strip()
+    if choice == "1":
+        return True
+    elif choice == "2":
+        return False
+    else:
+        return enter_forest_menu()
+
+
+# Main Game Loop
 def main():
     parser = ArgumentParser()
-    parser.add_argument("stage_file", nargs="?", default="stage_map.txt")
-    stage_file = parser.parse_args().stage_file
+    parser.add_argument("-f", "--stage_file", default="stage_map.txt", help="Stage file to load")
+    parser.add_argument("-m", "--moves", default="", help="String of moves to simulate")
+    parser.add_argument("-o", "--output", default="", help="Output file for simulated moves")
+    args = parser.parse_args()
 
     try:
-        stage_map = load_stage_map(stage_file)
+        original_stage_map = load_stage_map(args.stage_file)
     except FileNotFoundError:
-        print(f"Error: Stage file '{stage_file}' not found.")
+        print(f"Error: Stage file '{args.stage_file}' not found.")
         return
     except Exception as e:
         print(f"Error loading map: {e}")
         return
 
-    px, py = get_player_position(stage_map)
-    if px is None:
-        print("Error: Player 'L' not found on map.")
+    if args.moves:  # Simulate moves and output to file
+        stage_map = deepcopy(original_stage_map)
+        px, py = get_player_position(stage_map)
+        under_tile = "."
+        held_item = None
+        score = 0
+        total_mushrooms = sum(row.count("+") for row in stage_map)
+        for move in args.moves:
+            px, py, under_tile, held_item, score, ended, _ = handle_action(
+                move, stage_map, px, py, under_tile, held_item, score, total_mushrooms
+            )
+            if ended:
+                break
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write("CLEAR\n" if score == total_mushrooms else "NO CLEAR\n")
+            f.write(f"{len(stage_map)} {len(stage_map[0])}\n")
+            for row in stage_map:
+                f.write("".join(row) + "\n")
         return
 
+    start_game = display_menu()
+    if not start_game:
+        start_game = display_menu()
+
+    stage_map = deepcopy(original_stage_map)
+    px, py = get_player_position(stage_map)
     under_tile = "."
     held_item = None
-    total_mushrooms = sum(row.count("+") for row in stage_map)
     score = 0
+    total_mushrooms = sum(row.count("+") for row in stage_map)
     message = ""
 
     while True:
         clear()
         print(convert_map(stage_map))
         print(f"Score: {score}/{total_mushrooms} | Held: {held_item or 'None'}")
-
         if message:
             print(f"\n{message}")
 
-        user_input = input("\nEnter input (w,a,s,d,p) or 'exit': ").lower()
+        user_input = input("\nEnter input (W/A/S/D, P to pick, ! to reset, exit to quit): ").lower()
         if user_input == "exit":
             break
+        if "!" in user_input:
+            stage_map = deepcopy(original_stage_map)
+            px, py = get_player_position(stage_map)
+            under_tile = "."
+            held_item = None
+            score = 0
+            message = "Stage has been reset!"
+            continue
 
         message = ""
-
         for act in user_input:
             px, py, under_tile, held_item, score, ended, new_message = handle_action(
                 act, stage_map, px, py, under_tile, held_item, score, total_mushrooms
             )
-
             if new_message:
                 message = new_message
-
             if ended:
                 clear()
                 print(convert_map(stage_map))
