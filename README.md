@@ -1,38 +1,48 @@
 # Shroom Raider
 
-**Shroom Raider** is a simple terminal-based adventure game where the player collects mushrooms, navigates obstacles like trees, rocks, and water, and can use special items like axes and flamethrowers to overcome challenges. The game is inspired by classic tile-based adventure games.
+**Shroom Raider** is a terminal-based adventure game where players collect mushrooms, navigate obstacles, and use special items to overcome challenges.
 
 ---
 
 ## Features
 
-* Navigate a 2D map using **W/A/S/D** controls.
-* Collect mushrooms to win the game.
-* Interact with trees using **axe** or **flamethrower**.
-* Push rocks to clear paths.
-* Pick up special items like **axe** and **flamethrower** using **P**.
-* Game ends if the player falls into water or collects all mushrooms.
-* Real-time score tracking and inventory display.
-* Main menu with introduction and ASCII art of Shroom Raider.
+- Navigate a 2D map using **W/A/S/D** or **U/L/D/R** keys.
+- Collect mushrooms to win.
+- Interact with trees using **axe** or **flamethrower**.
+- Push rocks to clear paths.
+- Pick up special items using **P**.
+- Reset the stage anytime with **!**.
+- Main menu with ASCII title and options:
+  - Read the Ranger's Notes (tutorial)
+  - Enter the Forest (start game)
+  - Run Away (exit)
+- Game ends if the player falls into water or collects all mushrooms.
+- Real-time score tracking and inventory display.
 
 ---
 
 ## Requirements
 
-* Python 3.7+
-* Terminal or command line interface
+- Python 3.7+
+- Terminal or command line interface
+- Third-party dependencies:
+  - `colorama`
+  - `pytest` (for unit tests)
+
+Install dependencies:
+```
+python3 -m pip install -r requirements.txt
+```
 
 ---
 
 ## Installation
 
 1. Clone or download the repository:
-
 ```
 git clone <your-repo-url>
 cd shroom-raider
 ```
-
 2. Ensure you have a map file (default: `stage_map.txt`) in the project directory.
 
 ---
@@ -40,62 +50,38 @@ cd shroom-raider
 ## How to Play
 
 1. Run the game:
-
 ```
 python shroom_raider.py
 ```
+2. Main Menu options:
+- **Read the Ranger's Notes** – Tutorial instructions and tips.  
+- **Enter the Forest** – Start the game.  
+- **Run Away** – Exit the game.  
 
-2. Main Menu:
+3. Controls in the forest:
+- **W / U** – Move up  
+- **A / L** – Move left  
+- **S / D** – Move down  
+- **D / R** – Move right  
+- **P** – Pick up item  
+- **!** – Reset stage  
+- **exit** – Quit the game
 
-When you start the game, you will see the following introduction:
-
-```
-███████╗██╗  ██╗██████╗  ██████╗  ██████╗ ███╗   ███╗    ██████╗  █████╗ ██╗██████╗ ███████╗██████╗ 
-██╔════╝██║  ██║██╔══██╗██╔═══██╗██╔═══██╗████╗ ████║    ██╔══██╗██╔══██╗██║██╔══██╗██╔════╝██╔══██╗
-███████╗███████║██████╔╝██║   ██║██║   ██║██╔████╔██║    ██████╔╝███████║██║██║  ██║█████╗  ██████╔╝
-╚════██║██╔══██║██╔══██╗██║   ██║██║   ██║██║╚██╔╝██║    ██╔══██╗██╔══██║██║██║  ██║██╔══╝  ██╔══██╗
-███████║██║  ██║██║  ██║╚██████╔╝╚██████╔╝██║ ╚═╝ ██║    ██║  ██║██║  ██║██║██████╔╝███████╗██║  ██║
-╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝     ╚═╝    ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝
-
-Hi Laro Craft! Welcome to Shroom Raider.
-We’re amazed by your skills in mushroom gathering.
-Collect all the mushrooms hidden in the forest — can you master the game?
-
-[1] Enter the Forest
-[2] Run Away
-```
-
-* Input **1** to start the game.
-* Input **2** to exit the game.
-
-3. In-game Controls:
-
-* **W** – Move up
-* **A** – Move left
-* **S** – Move down
-* **D** – Move right
-* **P** – Pick up item
-* **exit** – Quit the game
-
-4. Game objective:
-
-* Collect all mushrooms (`+`) on the map.
-* Use **axe** (`x`) to chop down trees (`T`).
-* Use **flamethrower** (`*`) to burn clusters of trees.
-* Push rocks (`R`) to clear paths.
-* Avoid falling into water (`~`) or the game ends.
+4. Objectives:
+- Collect all mushrooms (`+`).  
+- Chop trees (`T`) with axe (`x`) or burn with flamethrower (`*`).  
+- Push rocks (`R`) to clear paths.  
+- Avoid water (`~`) or the game ends.  
 
 ---
 
 ## Map File Format
 
-* The first line of the file specifies the **number of rows and columns**:
-
+- First line: **number of rows and columns**  
 ```
 5 10
 ```
-
-* The remaining lines represent the map, using these symbols:
+- Remaining lines: map symbols
 
 | Symbol | Description                |
 | ------ | -------------------------- |
@@ -121,3 +107,31 @@ Collect all the mushrooms hidden in the forest — can you master the game?
 ..T..x....  
 ~~~~......  
 ```
+
+---
+
+## Bonus Features
+
+- ASCII **Shroom Raider** title in main menu.
+- Story-based tutorial (Ranger's Notes).
+- Multiple movement schemes (W/A/S/D + U/L/D/R).
+- Stage reset feature (! key).
+- Interactive score and inventory tracking.
+
+---
+
+## Running Tests
+
+Run all unit tests using pytest:
+```
+pytest
+```
+
+---
+
+## Requirements File (`requirements.txt`)
+```
+colorama
+pytest
+```
+
